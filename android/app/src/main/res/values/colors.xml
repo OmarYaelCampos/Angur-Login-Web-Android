@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="angur_ink">#183F40</color>
+    <color name="angur_muted">#536565</color>
+    <color name="angur_warm">#F8F6F2</color>
+    <color name="angur_coral">#F15C63</color>
+    <color name="angur_mint">#D7E6E2</color>
+    <color name="angur_border">#DCE4E2</color>
+    <color name="angur_error">#BB3343</color>
+</resources>

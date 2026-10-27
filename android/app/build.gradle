@@ -1,0 +1,41 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'mx.velian.angurgestion'
+    compileSdk 36
+
+    defaultConfig {
+        applicationId 'mx.velian.angurgestion'
+        minSdk 26
+        targetSdk 36
+        versionCode 1
+        versionName '1.0'
+    }
+
+    buildFeatures {
+        buildConfig true
+    }
+
+    buildTypes {
+        debug {
+            buildConfigField 'String', 'API_BASE_URL', '"http://10.0.2.2:8080/angur-web"'
+            manifestPlaceholders = [cleartextTraffic: 'true']
+        }
+        release {
+            buildConfigField 'String', 'API_BASE_URL', '"https://api.angur.example/angur-web"'
+            manifestPlaceholders = [cleartextTraffic: 'false']
+            minifyEnabled false
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+dependencies {
+    testImplementation 'junit:junit:4.13.2'
+}

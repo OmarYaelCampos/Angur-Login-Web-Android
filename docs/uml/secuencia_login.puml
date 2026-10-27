@@ -1,0 +1,40 @@
+@startuml
+skinparam shadowing false
+skinparam sequence {
+  ArrowColor #184041
+  LifeLineBorderColor #184041
+  ParticipantBorderColor #184041
+  ParticipantBackgroundColor #F7F4EF
+}
+actor Usuario
+participant "Web / Android" as Interfaz
+participant "LoginServlet" as API
+participant "AuthService" as Servicio
+participant "UsuarioRepository" as Repo
+database "MySQL" as DB
+participant "PasswordHasher" as Hash
+Usuario -> Interfaz : Ingresa usuario/correo y contraseña
+Interfaz -> Interfaz : Valida campos obligatorios
+alt Hay campos vacíos
+  Interfaz --> Usuario : Muestra campos faltantes
+else Campos completos
+  Interfaz -> API : POST /api/auth/login
+  API -> Servicio : login(identifier, password)
+  Servicio -> Repo : findByIdentifier(identifier)
+  Repo -> DB : SELECT parametrizado
+  DB --> Repo : Usuario o ausencia
+  Repo --> Servicio : Usuario o ausencia
+  Servicio -> Hash : verify(password, passwordHash)
+  Hash --> Servicio : verdadero / falso
+  alt Cuenta activa y contraseña correcta
+    Servicio --> API : Resultado autenticado
+    API -> API : Invalida sesión anterior y crea HttpSession
+    API --> Interfaz : 200 + nombre + rol
+    Interfaz --> Usuario : Muestra confirmación
+  else Credenciales incorrectas o cuenta inactiva
+    Servicio --> API : Rechazo
+    API --> Interfaz : 401 + mensaje genérico
+    Interfaz --> Usuario : Muestra error
+  end
+end
+@enduml

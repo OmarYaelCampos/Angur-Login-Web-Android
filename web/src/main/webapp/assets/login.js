@@ -1,0 +1,90 @@
+(() => {
+  "use strict";
+
+  const form = document.getElementById("login-form");
+  const identifier = document.getElementById("identifier");
+  const password = document.getElementById("password");
+  const button = document.getElementById("submit-button");
+  const message = document.getElementById("form-message");
+
+  function clearErrors() {
+    for (const input of [identifier, password]) {
+      input.removeAttribute("aria-invalid");
+      document.getElementById(`${input.id}-error`).textContent = "";
+    }
+    message.hidden = true;
+    message.textContent = "";
+  }
+
+  function fieldError(input, text) {
+    input.setAttribute("aria-invalid", "true");
+    document.getElementById(`${input.id}-error`).textContent = text;
+  }
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    clearErrors();
+
+    let firstInvalid = null;
+    if (!identifier.value.trim()) {
+      fieldError(identifier, "Ingresa tu usuario o correo.");
+      firstInvalid = identifier;
+    }
+    if (!password.value) {
+      fieldError(password, "Ingresa tu contraseña.");
+      firstInvalid ??= password;
+    }
+    if (firstInvalid) {
+      firstInvalid.focus();
+      return;
+    }
+
+    if (window.location.protocol === "file:") {
+      message.textContent = "Para comprobar credenciales, abre esta página desde Tomcat.";
+      message.hidden = false;
+      return;
+    }
+
+    button.disabled = true;
+    button.textContent = "Validando…";
+    try {
+      const body = new URLSearchParams({
+        identifier: identifier.value.trim(),
+        password: password.value,
+      });
+      const response = await fetch(form.dataset.endpoint, {
+        method: "POST",
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" },
+        body,
+      });
+      const result = await response.json();
+      if (!response.ok || !result.ok) {
+        message.textContent = result.message || "No se pudo iniciar sesión.";
+        message.hidden = false;
+        password.value = "";
+        password.focus();
+        return;
+      }
+      password.value = "";
+      document.getElementById("success-name").textContent = result.name;
+      document.getElementById("success-role").textContent = result.role.replaceAll("_", " ");
+      document.getElementById("form-view").hidden = true;
+      document.getElementById("success-view").hidden = false;
+    } catch (_) {
+      message.textContent = "No fue posible conectarse al servicio. Inténtalo más tarde.";
+      message.hidden = false;
+    } finally {
+      button.disabled = false;
+      button.textContent = "Iniciar sesión";
+    }
+  });
+
+  for (const input of [identifier, password]) {
+    input.addEventListener("input", () => {
+      input.removeAttribute("aria-invalid");
+      document.getElementById(`${input.id}-error`).textContent = "";
+      message.hidden = true;
+    });
+  }
+})();

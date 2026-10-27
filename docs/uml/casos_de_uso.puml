@@ -1,0 +1,28 @@
+@startuml
+left to right direction
+skinparam shadowing false
+skinparam usecase {
+  BackgroundColor #F7F4EF
+  BorderColor #184041
+  ArrowColor #184041
+}
+actor Administrador
+actor Vendedor
+actor Cliente
+actor "Supervisor de ventas" as Supervisor
+actor "Encargado de almacén" as Almacen
+rectangle "Angur Gestión — acceso web y Android" {
+  usecase "Iniciar sesión" as Login
+  usecase "Validar campos" as Campos
+  usecase "Verificar credenciales" as Credenciales
+  usecase "Mostrar error" as Error
+}
+Administrador --> Login
+Vendedor --> Login
+Cliente --> Login
+Supervisor --> Login
+Almacen --> Login
+Login .> Campos : <<include>>
+Login .> Credenciales : <<include>>
+Error .> Login : <<extend>>
+@enduml

@@ -1,0 +1,71 @@
+@startuml
+skinparam shadowing false
+skinparam class {
+  BackgroundColor #F7F4EF
+  BorderColor #184041
+  ArrowColor #184041
+}
+
+package "Servicio web (Java)" {
+  class UserAccount <<record>> {
+    +id: long
+    +username: String
+    +email: String
+    +displayName: String
+    +passwordHash: String
+    +role: String
+    +active: boolean
+  }
+  interface UserRepository {
+    +findByIdentifier(identifier: String): Optional<UserAccount>
+  }
+  class JdbcUserRepository {
+    +findByIdentifier(identifier: String): Optional<UserAccount>
+  }
+  class Database {
+    +connect(): Connection
+  }
+  class PasswordHasher {
+    +hash(password: char[]): String
+    +verify(password: char[], encoded: String): boolean
+  }
+  class AuthService {
+    +login(identifier: String, password: String): LoginResult
+  }
+  class LoginResult <<record>> {
+    +status: Status
+    +user: UserAccount
+  }
+  enum Status {
+    SUCCESS
+    REQUIRED_FIELDS
+    INVALID_INPUT
+    INVALID_CREDENTIALS
+  }
+  class LoginServlet {
+    +doPost(request, response)
+  }
+}
+
+package "Android (Java)" {
+  class LoginValidator {
+    +validate(identifier: String, password: String): Result
+  }
+  class LoginActivity {
+    -submit()
+    -requestLogin(identifier: String, password: String): LoginResponse
+  }
+}
+
+JdbcUserRepository ..|> UserRepository
+JdbcUserRepository --> Database
+JdbcUserRepository --> UserAccount
+AuthService --> UserRepository
+AuthService --> PasswordHasher
+AuthService --> LoginResult
+LoginResult --> Status
+LoginResult --> UserAccount
+LoginServlet --> AuthService
+LoginActivity --> LoginValidator
+LoginActivity ..> LoginServlet : HTTP/JSON
+@enduml

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Angur Gestión</string>
+    <string name="brand_angur">Angur</string>
+    <string name="brand_gestion">Gestión</string>
+    <string name="welcome">Bienvenido de nuevo.</string>
+    <string name="instruction">Ingresa tus credenciales para continuar.</string>
+    <string name="identifier_label">Usuario o correo electrónico</string>
+    <string name="identifier_hint">Ingresa tu usuario o correo</string>
+    <string name="password_label">Contraseña</string>
+    <string name="password_hint">Ingresa tu contraseña</string>
+    <string name="login_button">Iniciar sesión</string>
+    <string name="validating">Validando…</string>
+    <string name="success">Inicio de sesión correcto</string>
+    <string name="error_identifier">Ingresa tu usuario o correo.</string>
+    <string name="error_password">Ingresa tu contraseña.</string>
+    <string name="error_required">Completa los campos obligatorios.</string>
+    <string name="error_service">No fue posible conectarse al servicio. Inténtalo más tarde.</string>
+</resources>
