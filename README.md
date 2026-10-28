@@ -17,20 +17,21 @@ Login para la versión web y Android. Ambas aplicaciones consultan la misma API 
 
    ```sql
    CREATE USER IF NOT EXISTS 'angur_app'@'127.0.0.1' IDENTIFIED BY 'REEMPLAZA_CON_TU_CLAVE_LOCAL';
-   GRANT SELECT, INSERT ON angur_gestion.usuarios TO 'angur_app'@'127.0.0.1';
+   GRANT SELECT ON angur_gestion.usuarios TO 'angur_app'@'127.0.0.1';
    ```
 
-   Para iniciar sesión la app requiere permiso SELECT. INSERT se usa solo para crear las cuentas de práctica.
-   Si la cuenta ya existe, conserva su contraseña actual y úsala cuando el script la solicite.
-3. Abre PowerShell en la carpeta raíz del repositorio.
-4. Ejecuta:
+   La app solo requiere permiso SELECT para validar el inicio de sesión. Si la cuenta ya existe, conserva su contraseña actual y úsala cuando el script la solicite.
+3. Para abrir la web, haz doble clic en **Abrir Angur Web.bat** en la carpeta raíz del repositorio. Se abrirá una ventana de PowerShell, compilará el proyecto y pedirá el usuario y contraseña de la cuenta `angur_app` de MySQL. Deja esa ventana abierta mientras uses el sistema.
+4. Visita **http://localhost:8080/angur-web/**. La vista previa de IntelliJ en el puerto `63342` solo muestra el HTML y no conecta con la API, así que el login no funciona desde esa dirección.
+
+También puedes iniciarla manualmente desde PowerShell:
 
    ```powershell
    .\iniciar_web.ps1
    ```
 
    El script compila el WAR, lo despliega en Tomcat y solicita el usuario y la contraseña de MySQL si no están configurados en las variables de entorno.
-5. Deja abierta la ventana de PowerShell y visita **http://localhost:8080/angur-web/**.
+Al terminar, deja abierta la ventana de PowerShell y visita **http://localhost:8080/angur-web/**.
 
 Si PowerShell bloquea el script, ejecútalo para esa ventana con:
 
