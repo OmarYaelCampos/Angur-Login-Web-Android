@@ -1,39 +1,80 @@
-# Angur Gestión: login web y Android
+# Angur Gestión
 
-Proyecto de inicio de sesión para cinco perfiles: administrador, vendedor, cliente, supervisor de ventas y encargado de almacén. La interfaz web y la aplicación Android usan la misma API Java, desplegada en Tomcat y conectada a MySQL.
-
-## Código
-
-- `web/`: interfaz HTML/CSS/JavaScript y API Java.
-- `android/`: aplicación Android Studio en Java/XML.
-- `db/schema.sql`: esquema MySQL.
-- `docs/`: especificación, pruebas y diagramas del login.
+Login para la versión web y Android. Ambas aplicaciones consultan la misma API Java y la misma tabla MySQL. Si falta el usuario o la contraseña, aparece un mensaje para completar ambos campos. Si la autenticación es correcta, se abre un menú de muestra. Sus módulos son únicamente visuales: todavía no tienen acciones.
 
 ## Requisitos
 
-- Java 17 o posterior, Maven, MySQL 8 y Tomcat 10.1.
-- Para Android: Android Studio compatible con Android Gradle Plugin 9.0.1 y SDK 36.
+- Java JDK 17 o posterior.
+- Apache Maven.
+- MySQL 8.
+- Apache Tomcat 10.1.
+- Android Studio y Android SDK 36 para la aplicación móvil.
 
-## Base de datos y API web
+## Abrir la versión web
 
-Ejecuta `db/schema.sql` en MySQL. Configura `ANGUR_DB_URL`, `ANGUR_DB_USER` y `ANGUR_DB_PASSWORD` en el entorno donde inicia Tomcat; la aplicación no guarda las credenciales en el código.
+1. Inicia el servicio MySQL. En MySQL Workbench, abre y ejecuta una vez **db/schema.sql**.
+2. En Workbench, con una cuenta administradora local, crea una cuenta para la app. Cambia el texto de contraseña antes de ejecutar:
 
-Compila la aplicación web:
+   ```sql
+   CREATE USER IF NOT EXISTS 'angur_app'@'127.0.0.1' IDENTIFIED BY 'REEMPLAZA_CON_TU_CLAVE_LOCAL';
+   GRANT SELECT, INSERT ON angur_gestion.usuarios TO 'angur_app'@'127.0.0.1';
+   ```
+
+   Para iniciar sesión la app requiere permiso SELECT. INSERT se usa solo para crear las cuentas de práctica.
+   Si la cuenta ya existe, conserva su contraseña actual y úsala cuando el script la solicite.
+3. Abre PowerShell en la carpeta raíz del repositorio.
+4. Ejecuta:
+
+   ```powershell
+   .\iniciar_web.ps1
+   ```
+
+   El script compila el WAR, lo despliega en Tomcat y solicita el usuario y la contraseña de MySQL si no están configurados en las variables de entorno.
+5. Deja abierta la ventana de PowerShell y visita **http://localhost:8080/angur-web/**.
+
+Si PowerShell bloquea el script, ejecútalo para esa ventana con:
 
 ```powershell
-mvn -f web/pom.xml package
+Set-ExecutionPolicy -Scope Process Bypass
+.\iniciar_web.ps1
 ```
 
-Despliega `web/target/angur-web.war` en Tomcat 10.1 e inicia Tomcat desde el entorno que contiene las variables de base de datos. La web queda disponible en `http://localhost:8080/angur-web/` y el endpoint de autenticación es `POST /angur-web/api/auth/login`.
+CATALINA_HOME puede apuntar a otra carpeta de Tomcat. Si Maven o Java no están en PATH, instálalos o configura sus variables de entorno antes de iniciar.
 
-Para cargar cuentas de práctica, configura `ANGUR_SEED_PASSWORD` con una contraseña de práctica y ejecuta la utilidad `mx.velian.angur.auth.SeedDemoUsers` con las clases de `web/target/classes` y el conector JDBC de MySQL en el classpath. La utilidad crea cinco perfiles de prueba y no modifica cuentas que ya existan.
+## Preparar cuentas de práctica
 
-## Aplicación Android
+Si la tabla usuarios ya contiene cuentas activas, inicia sesión con ellas. Para crear las cinco cuentas de práctica incluidas en SeedDemoUsers, primero compila el proyecto y configura las variables de conexión de MySQL. El usuario de base de datos necesita permiso INSERT durante este paso.
 
-Abre la carpeta `android/` en Android Studio, sincroniza Gradle y ejecuta la app en un emulador. La variante `debug` se conecta a `http://10.0.2.2:8080/angur-web`, así que Tomcat debe estar activo en el equipo anfitrión. Para usar un teléfono físico o publicar una versión, configura una URL HTTPS accesible desde ese dispositivo.
+En PowerShell, define una contraseña de práctica de 12 caracteres o más y ejecuta la utilidad:
 
-## Documentación
+```powershell
+$env:ANGUR_DB_URL = 'jdbc:mysql://127.0.0.1:3306/angur_gestion?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC'
+$env:ANGUR_DB_USER = 'angur_app'
+$secureDbPassword = Read-Host 'Contraseña MySQL' -AsSecureString
+$env:ANGUR_DB_PASSWORD = [System.Net.NetworkCredential]::new('', $secureDbPassword).Password
+$secureSeedPassword = Read-Host 'Contraseña para las cuentas de práctica (12 caracteres o más)' -AsSecureString
+$env:ANGUR_SEED_PASSWORD = [System.Net.NetworkCredential]::new('', $secureSeedPassword).Password
+mvn -f web/pom.xml package
+$connector = Get-ChildItem .\web\target\angur-web\WEB-INF\lib\mysql-connector-j-*.jar | Select-Object -First 1
+java -cp ".\web\target\classes;$($connector.FullName)" mx.velian.angur.auth.SeedDemoUsers
+Remove-Item Env:ANGUR_SEED_PASSWORD
+```
 
-- [Especificación del login](docs/01_especificacion_login.md)
-- [Pruebas del login](docs/02_pruebas_login.md)
-- [Propuesta de arquitectura](docs/03_propuesta_arquitectura_repositorios.md)
+Los nombres que se crean son **administrador**, **vendedor**, **cliente**, **supervisor** y **almacen**. Las cuentas nuevas usan la contraseña de práctica que elegiste; las que ya existían conservan su contraseña. No se guarda esa contraseña en el repositorio.
+
+## Abrir la aplicación Android
+
+1. Abre Android Studio y selecciona **File > Open**.
+2. Elige la carpeta **android** dentro del repositorio, espera a que termine **Gradle Sync** y acepta instalar los componentes de Android SDK que falten.
+3. Inicia primero MySQL y la versión web con los pasos anteriores.
+4. Selecciona la configuración **app**, elige un emulador y pulsa **Run**.
+
+La variante debug ya apunta desde el emulador a **http://10.0.2.2:8080/angur-web**, que llega a Tomcat en el equipo. Un teléfono físico requiere cambiar esa URL por una dirección accesible desde el teléfono; para un despliegue real debe utilizarse HTTPS.
+
+## Estructura
+
+- **web/**: interfaz HTML/CSS/JavaScript y servicio Java.
+- **android/**: aplicación Android Studio.
+- **db/schema.sql**: base de datos y tabla de usuarios.
+- **iniciar_web.ps1**: compilación y arranque local de la web.
+- **docs/**: especificación y notas del proyecto.

@@ -28,7 +28,8 @@ public final class LoginServlet extends HttpServlet {
         }
 
         switch (result.status()) {
-            case REQUIRED_FIELDS -> sendError(response, 400, "REQUIRED_FIELDS", "Ingresa tu usuario y contraseña.");
+            case REQUIRED_FIELDS -> sendError(response, 400, "REQUIRED_FIELDS",
+                    "Debes llenar ambos campos: usuario y contraseña.");
             case INVALID_INPUT -> sendError(response, 400, "INVALID_INPUT", "Revisa los datos ingresados.");
             case INVALID_CREDENTIALS -> sendError(response, 401, "INVALID_CREDENTIALS", "Usuario o contraseña incorrectos.");
             case SUCCESS -> {

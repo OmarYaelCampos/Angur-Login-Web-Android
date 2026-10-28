@@ -1,6 +1,6 @@
 # Inicio de sesión de Angur Gestión
 
-**Alcance:** primera etapa para la aplicación web y la aplicación Android. Ambas consultan el mismo servicio Java y la misma tabla MySQL. Esta entrega no implementa inventario, cotizaciones, ventas ni paneles posteriores al acceso.
+**Alcance:** primera etapa para la aplicación web y la aplicación Android. Ambas consultan el mismo servicio Java y la misma tabla MySQL. Después de autenticar, muestran un menú de muestra cuyos módulos son solo visuales; no implementan inventario, cotizaciones, ventas ni acciones posteriores al acceso.
 
 **Fuentes del proyecto:** `Documento de la empresa.docx` (requisitos de seguridad y sistema), `VELIAN - Presentacion del equipo.pptx` (RF/RNF y tecnología), `Look & Feel AngurGestion.pdf` (pantalla de login y guía visual), y los cinco perfiles definidos para el proyecto.
 
@@ -8,13 +8,13 @@
 
 | ID | Requisito | Criterio de aceptación | Origen |
 | --- | --- | --- | --- |
-| LOGIN-F01 | Permitir que administrador, vendedor, cliente, supervisor de ventas y encargado de almacén ingresen con usuario o correo y contraseña. | Una cuenta activa con credenciales correctas recibe confirmación, nombre y perfil. | Control de acceso RNF-03; perfiles del proyecto |
-| LOGIN-F02 | Validar los dos campos antes de enviar la solicitud. | Si alguno está vacío, el campo se marca y no se llama a la API. La contraseña no se modifica ni se recorta. | Usabilidad RNF-01 |
+| LOGIN-F01 | Permitir que administrador, vendedor, cliente, supervisor de ventas y encargado de almacén ingresen con usuario o correo y contraseña. | Una cuenta activa con credenciales correctas abre el menú visual y muestra el nombre y perfil. | Control de acceso RNF-03; perfiles del proyecto |
+| LOGIN-F02 | Validar los dos campos antes de enviar la solicitud. | Si alguno está vacío, se marca el campo faltante, se indica que deben completarse usuario y contraseña y no se llama a la API. La contraseña no se modifica ni se recorta. | Usabilidad RNF-01 |
 | LOGIN-F03 | Verificar las credenciales en el servidor contra MySQL. | El servidor consulta por usuario o correo mediante una consulta parametrizada y compara la contraseña con el hash almacenado. | Seguridad RNF-03; MySQL RS-08 |
 | LOGIN-F04 | Rechazar credenciales incorrectas o cuentas inactivas. | En ambos casos se muestra el mismo mensaje genérico y no se inicia sesión. | Seguridad RNF-03 |
 | LOGIN-F05 | Crear una sesión web al autenticar correctamente. | La sesión anterior se invalida y la nueva identifica al usuario y su perfil; la cookie es HttpOnly. | Control de acceso RNF-03 |
 | LOGIN-F06 | Presentar mensajes de validación claros en web y Android. | La pantalla distingue campos vacíos, credenciales incorrectas y servicio no disponible sin revelar si existe la cuenta. | Usabilidad RNF-01; seguridad RNF-03 |
-| LOGIN-F07 | Mostrar el resultado en la misma pantalla de login. | Se ve una confirmación con nombre y perfil; no se abre un módulo que aún no forma parte de esta etapa. | Alcance de la entrega |
+| LOGIN-F07 | Mostrar un menú visual después de iniciar sesión correctamente. | Se muestra nombre, perfil y tarjetas de módulos sin botones, enlaces ni acciones. | Alcance de la entrega |
 
 ## 2. Requisitos no funcionales
 
@@ -42,7 +42,7 @@ Los cinco perfiles son actores de **CU-LOGIN-01 Iniciar sesión**. Todos siguen 
 4. La interfaz envía las credenciales al servicio.
 5. El servicio busca la cuenta y verifica la contraseña.
 6. El servicio confirma la autenticación, indica nombre y perfil; en web crea una sesión.
-7. La interfaz presenta la confirmación.
+7. La interfaz muestra el menú visual con el nombre y el perfil autenticados.
 
 **Alternativa A — campos vacíos:** en el paso 3, la interfaz marca los campos faltantes, muestra un mensaje y no envía la solicitud.
 
@@ -50,7 +50,7 @@ Los cinco perfiles son actores de **CU-LOGIN-01 Iniciar sesión**. Todos siguen 
 
 **Alternativa C — servicio no disponible:** en el paso 4 o 5, la interfaz informa que no pudo conectarse; no muestra una confirmación de acceso.
 
-**Poscondición de éxito:** la identidad y el perfil quedan disponibles en la respuesta; en web existe una sesión. **Poscondición de rechazo:** no se crea sesión.
+**Poscondición de éxito:** la identidad y el perfil quedan disponibles en la respuesta; en web existe una sesión y se muestra el menú visual. **Poscondición de rechazo:** no se crea sesión.
 
 ## 4. Diagramas UML
 
@@ -58,7 +58,7 @@ El [atlas completo](../entregables/diagramas/INDICE.md) incluye casos de uso, ac
 
 ## 5. Prototipos de interfaz
 
-La web y Android toman del PDF los colores verde azulado, fondo claro y botón coral. La vista final muestra solo el bloque de login indicado por el usuario: marca Angur Gestión, saludo, usuario o correo, contraseña, botón de acceso y zona de mensajes. Se eliminó el panel introductorio.
+La web y Android toman del PDF los colores verde azulado, fondo claro y botón coral. La pantalla inicial muestra marca Angur Gestión, saludo, usuario o correo, contraseña, botón de acceso y mensajes. Después de una autenticación correcta se muestra un menú de ejemplo con Productos, Inventario, Clientes, Cotizaciones, Ventas y Reportes. Las tarjetas no son controles y no ejecutan acciones.
 
 - Web: `web/src/main/webapp/index.html` y `web/src/main/webapp/assets/login.css`.
 - Android: `android/app/src/main/res/layout/activity_login.xml` y sus recursos de color/dibujo.
@@ -72,9 +72,9 @@ Las capturas de los prototipos y pruebas se documentan en [02_pruebas_login.md](
 ## 7. Decisiones de esta etapa
 
 - La autenticación acepta **usuario o correo** en un mismo campo.
-- Android muestra el resultado del login, pero no conserva una sesión para otros módulos, pues aún no existen en esta entrega.
+- Android muestra el menú de ejemplo después del login, pero no conserva una sesión para otros módulos, pues aún no existen en esta entrega.
 - La URL `10.0.2.2` se utiliza solo en el emulador Android para llegar a Tomcat en el equipo anfitrión. Un dispositivo físico requiere una URL de servidor accesible y HTTPS.
-- La confirmación permanece en la misma pantalla para respetar el alcance de esta primera etapa.
+- El menú posterior al login es una maqueta visual. Los módulos no tienen interacción ni lógica de negocio.
 
 ## 8. Contrato de autenticación compartido
 
@@ -82,7 +82,7 @@ Las capturas de los prototipos y pruebas se documentan en [02_pruebas_login.md](
 
 | Estado | Respuesta | Uso en la interfaz |
 | --- | --- | --- |
-| `200` | `{"ok":true,"name":"...","role":"..."}` | Mostrar confirmación, nombre y perfil. |
+| `200` | `{"ok":true,"name":"...","role":"..."}` | Mostrar el menú visual, nombre y perfil. |
 | `400` | `{"ok":false,"code":"REQUIRED_FIELDS" o "INVALID_INPUT","message":"..."}` | Marcar o explicar datos incompletos o inválidos. |
 | `401` | `{"ok":false,"code":"INVALID_CREDENTIALS","message":"..."}` | Informar rechazo genérico. |
 | `503` | `{"ok":false,"code":"SERVICE_UNAVAILABLE","message":"..."}` | Indicar que el servicio no está disponible. |

@@ -1,17 +1,17 @@
-Angur Gestion - Login Android
-Compatible con Android Studio 2025.2.3.9 (Otter 3 Feature Drop)
+Angur Gestión para Android
 
-1. Extrae este ZIP.
-2. En Android Studio, selecciona File > Open.
-3. Elige la carpeta AngurGestionAndroidStudio que contiene settings.gradle.
-4. Espera a que termine Gradle Sync y ejecuta la configuracion app.
+1. Instala Android Studio y abre la carpeta android de este repositorio:
+   Angur-Gestion/android
+2. Espera a que termine Gradle Sync. Si Android Studio pregunta por el SDK,
+   acepta instalar Android SDK 36 y los componentes que indique.
+3. Inicia la API web y MySQL primero. La app Android valida las credenciales
+   contra el mismo servicio y la misma base de datos que la versión web.
+4. En la barra superior selecciona la configuración app y un emulador.
+5. Pulsa Run (el triángulo verde).
 
-El proyecto usa Android Gradle Plugin 9.0.1, Gradle 9.1.0, Java 17,
-compileSdk 36 y minSdk 26. Android Studio puede descargar el SDK o
-dependencias que falten durante la primera sincronizacion.
+La variante debug se conecta desde el emulador al servidor del equipo anfitrión
+en http://10.0.2.2:8080/angur-web. Al iniciar sesión correctamente se muestra
+un menú de ejemplo cuyos módulos son visuales y no tienen acciones.
 
-Para validar el login en el emulador, inicia Tomcat en el mismo equipo:
-http://localhost:8080/angur-web/
-La aplicacion debug se conecta desde el emulador a:
-http://10.0.2.2:8080/angur-web
-El servidor debe tener MySQL configurado y las cuentas cargadas.
+Un teléfono físico no puede usar 10.0.2.2. Requiere configurar una URL accesible
+desde el teléfono y usar HTTPS para una instalación real.

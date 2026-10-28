@@ -16,6 +16,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import org.json.JSONObject;
@@ -25,11 +26,12 @@ public final class LoginActivity extends Activity {
     private EditText identifierField;
     private EditText passwordField;
     private TextView messageView;
-    private TextView successName;
-    private TextView successRole;
+    private TextView menuInitial;
+    private TextView menuName;
+    private TextView menuRole;
     private Button loginButton;
     private View formView;
-    private View successView;
+    private View menuView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,11 +56,12 @@ public final class LoginActivity extends Activity {
         identifierField = findViewById(R.id.identifierField);
         passwordField = findViewById(R.id.passwordField);
         messageView = findViewById(R.id.messageView);
-        successName = findViewById(R.id.successName);
-        successRole = findViewById(R.id.successRole);
+        menuInitial = findViewById(R.id.menuInitial);
+        menuName = findViewById(R.id.menuName);
+        menuRole = findViewById(R.id.menuRole);
         loginButton = findViewById(R.id.loginButton);
         formView = findViewById(R.id.formView);
-        successView = findViewById(R.id.successView);
+        menuView = findViewById(R.id.menuView);
         loginButton.setOnClickListener(ignored -> submit());
     }
 
@@ -98,10 +101,14 @@ public final class LoginActivity extends Activity {
                 loginButton.setText(R.string.login_button);
                 if (result.success) {
                     passwordField.setText("");
-                    successName.setText(result.name);
-                    successRole.setText(result.role.replace('_', ' '));
+                    String name = result.name.isEmpty() ? identifier : result.name;
+                    menuName.setText(name);
+                    menuRole.setText(roleLabel(result.role));
+                    String trimmedName = name.trim();
+                    menuInitial.setText(trimmedName.isEmpty()
+                            ? "A" : trimmedName.substring(0, 1).toUpperCase(Locale.ROOT));
                     formView.setVisibility(View.GONE);
-                    successView.setVisibility(View.VISIBLE);
+                    menuView.setVisibility(View.VISIBLE);
                 } else {
                     passwordField.setText("");
                     showMessage(result.message);
@@ -109,6 +116,17 @@ public final class LoginActivity extends Activity {
                 }
             });
         });
+    }
+
+    private String roleLabel(String role) {
+        switch (role) {
+            case "ADMINISTRADOR": return getString(R.string.role_admin);
+            case "VENDEDOR": return getString(R.string.role_seller);
+            case "CLIENTE": return getString(R.string.role_client);
+            case "SUPERVISOR_VENTAS": return getString(R.string.role_supervisor);
+            case "ENCARGADO_ALMACEN": return getString(R.string.role_warehouse);
+            default: return role == null ? "" : role.replace('_', ' ');
+        }
     }
 
     private void showMessage(String message) {

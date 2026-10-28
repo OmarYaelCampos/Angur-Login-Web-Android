@@ -14,6 +14,20 @@
     <string name="success">Inicio de sesión correcto</string>
     <string name="error_identifier">Ingresa tu usuario o correo.</string>
     <string name="error_password">Ingresa tu contraseña.</string>
-    <string name="error_required">Completa los campos obligatorios.</string>
+    <string name="error_required">Debes llenar ambos campos: usuario y contraseña.</string>
     <string name="error_service">No fue posible conectarse al servicio. Inténtalo más tarde.</string>
+    <string name="menu_title">Menú principal</string>
+    <string name="menu_subtitle">Vista de muestra para Angur Gestión.</string>
+    <string name="menu_note">Los módulos se muestran solo de forma visual; todavía no tienen acciones.</string>
+    <string name="menu_products">Productos</string>
+    <string name="menu_inventory">Inventario</string>
+    <string name="menu_clients">Clientes</string>
+    <string name="menu_quotes">Cotizaciones</string>
+    <string name="menu_sales">Ventas</string>
+    <string name="menu_reports">Reportes</string>
+    <string name="role_admin">Administrador</string>
+    <string name="role_seller">Vendedor</string>
+    <string name="role_client">Cliente</string>
+    <string name="role_supervisor">Supervisor de ventas</string>
+    <string name="role_warehouse">Encargado de almacén</string>
 </resources>

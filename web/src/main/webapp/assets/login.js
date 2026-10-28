@@ -6,6 +6,19 @@
   const password = document.getElementById("password");
   const button = document.getElementById("submit-button");
   const message = document.getElementById("form-message");
+  const formView = document.getElementById("form-view");
+  const menuView = document.getElementById("menu-view");
+
+  function roleLabel(role) {
+    const labels = {
+      ADMINISTRADOR: "Administrador",
+      VENDEDOR: "Vendedor",
+      CLIENTE: "Cliente",
+      SUPERVISOR_VENTAS: "Supervisor de ventas",
+      ENCARGADO_ALMACEN: "Encargado de almacén",
+    };
+    return labels[role] || (role || "").toLowerCase().replaceAll("_", " ");
+  }
 
   function clearErrors() {
     for (const input of [identifier, password]) {
@@ -35,6 +48,8 @@
       firstInvalid ??= password;
     }
     if (firstInvalid) {
+      message.textContent = "Debes llenar ambos campos: usuario y contraseña.";
+      message.hidden = false;
       firstInvalid.focus();
       return;
     }
@@ -67,10 +82,13 @@
         return;
       }
       password.value = "";
-      document.getElementById("success-name").textContent = result.name;
-      document.getElementById("success-role").textContent = result.role.replaceAll("_", " ");
-      document.getElementById("form-view").hidden = true;
-      document.getElementById("success-view").hidden = false;
+      const name = result.name || identifier.value.trim();
+      document.getElementById("menu-name").textContent = name;
+      document.getElementById("menu-greeting").textContent = name;
+      document.getElementById("menu-role").textContent = roleLabel(result.role);
+      document.getElementById("menu-initial").textContent = Array.from(name.trim())[0]?.toLocaleUpperCase("es-MX") || "A";
+      formView.hidden = true;
+      menuView.hidden = false;
     } catch (_) {
       message.textContent = "No fue posible conectarse al servicio. Inténtalo más tarde.";
       message.hidden = false;

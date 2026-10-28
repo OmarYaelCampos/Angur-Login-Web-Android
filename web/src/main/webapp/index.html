@@ -9,10 +9,10 @@
   <script defer src="assets/login.js"></script>
 </head>
 <body>
-  <main class="login-layout">
+  <main id="form-view" class="login-layout">
     <section class="login-card" aria-labelledby="form-title">
       <div class="brand"><strong>Angur</strong><span>Gestión</span></div>
-      <div id="form-view">
+      <div id="login-content">
         <h2 id="form-title">Bienvenido de nuevo.</h2>
         <p class="subtitle">Ingresa tus credenciales para continuar.</p>
         <form id="login-form" data-endpoint="api/auth/login" novalidate>
@@ -32,12 +32,62 @@
           <button id="submit-button" type="submit">Iniciar sesión</button>
         </form>
       </div>
-      <div id="success-view" class="success-view" role="status" hidden>
-        <div class="success-icon" aria-hidden="true">✓</div>
-        <h2>Inicio de sesión correcto</h2>
-        <p id="success-name"></p>
-        <p id="success-role" class="role-badge"></p>
+    </section>
+  </main>
+
+  <main id="menu-view" class="dashboard-layout" aria-labelledby="menu-title" hidden>
+    <header class="dashboard-header">
+      <div class="brand dashboard-brand"><strong>Angur</strong><span>Gestión</span></div>
+      <div class="profile-summary" aria-label="Usuario autenticado">
+        <span id="menu-initial" class="profile-avatar" aria-hidden="true">A</span>
+        <div>
+          <p id="menu-name" class="profile-name"></p>
+          <p id="menu-role" class="role-badge"></p>
+        </div>
       </div>
+    </header>
+
+    <section class="dashboard-content">
+      <div class="dashboard-heading">
+        <p class="eyebrow">ANGUR GESTIÓN</p>
+        <h1 id="menu-title">Menú principal</h1>
+        <p>Bienvenido, <strong id="menu-greeting"></strong>. Este panel es una vista de muestra.</p>
+      </div>
+
+      <section class="menu-grid" aria-label="Módulos visuales">
+        <article class="menu-card">
+          <span class="menu-icon" aria-hidden="true">PR</span>
+          <h2>Productos</h2>
+          <p>Catálogo de productos</p>
+        </article>
+        <article class="menu-card">
+          <span class="menu-icon" aria-hidden="true">IN</span>
+          <h2>Inventario</h2>
+          <p>Existencias y movimientos</p>
+        </article>
+        <article class="menu-card">
+          <span class="menu-icon" aria-hidden="true">CL</span>
+          <h2>Clientes</h2>
+          <p>Directorio de clientes</p>
+        </article>
+        <article class="menu-card">
+          <span class="menu-icon" aria-hidden="true">CO</span>
+          <h2>Cotizaciones</h2>
+          <p>Propuestas comerciales</p>
+        </article>
+        <article class="menu-card">
+          <span class="menu-icon" aria-hidden="true">VE</span>
+          <h2>Ventas</h2>
+          <p>Resumen de ventas</p>
+        </article>
+        <article class="menu-card">
+          <span class="menu-icon" aria-hidden="true">RE</span>
+          <h2>Reportes</h2>
+          <p>Indicadores generales</p>
+        </article>
+      </section>
+
+      <p class="dashboard-note">Los módulos se muestran solo de forma visual; todavía no tienen acciones.</p>
     </section>
   </main>
 </body>
